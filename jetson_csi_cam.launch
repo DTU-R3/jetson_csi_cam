@@ -5,7 +5,7 @@
   <arg name="sync_sink" default="true" />                    <!-- Synchronize the app sink. Setting this to false may resolve problems with sub-par framerates. -->
   <arg name="width" default="1920" />                        <!-- Image Width -->
   <arg name="height" default="1080" />                       <!-- Image Height -->
-  <arg name="fps" default="1" />                            <!-- Desired framerate. True framerate may not reach this if set too high. -->
+  <arg name="fps" default="4" />                            <!-- Desired framerate. True framerate may not reach this if set too high. -->
 
   <!-- Make arguments available to parameter server -->
   <param name="$(arg cam_name)/image_width" type="int" value="$(arg width)" />
@@ -13,9 +13,7 @@
   <param name="$(arg cam_name)/target_fps" type="int" value="$(arg fps)" />
 
   <!-- Define the GSCAM pipeline -->
-  <env name="GSCAM_CONFIG" value="nvcamerasrc ! video/x-raw(memory:NVMM),
-    width=(int)$(arg width), height=(int)$(arg height), format=(string)I420, framerate=(fraction)$(arg fps)/1 ! 
-    nvvidconv flip-method=2 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR" />
+  <env name="GSCAM_CONFIG" value="nvcamerasrc aeLock=true scene-mode=12 ! video/x-raw(memory:NVMM), width=(int)$(arg width), height=(int)$(arg height), format=(string)I420, framerate=(fraction)$(arg fps)/1 ! nvvidconv flip-method=2 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR"/>
 
   <!-- Start the GSCAM node -->
   <node pkg="gscam" type="gscam" name="$(arg cam_name)">
